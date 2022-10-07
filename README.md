@@ -28,12 +28,12 @@ terrafom plan
 terraform validate
 terraform apply
 ```
-To validate and apply the infraestructure, some things such as credentials, CIDR blocks, and others are hardcoded in variables.tf, if you need to change the default credentials you have to change the variable values using
+To validate and apply the infraestructure. some things such as credentials, CIDR blocks, and others are hardcoded in variables.tf, if you need to change the default credentials you have to change the variable values using
 ```
 terraform apply -var "instance_name=value"
 ```
 
-##Some things to have in mind
+## Some things to have in mind
 - If you deploy the infraestrcuture, and then you use the command terrafom destroy, after all if you want to re-deploy you infraestructure, is necessary to change the name of secret, because when you delete a secret, it doesn't delete immediately, instead of that, it schedule a deletion.
 - The SSH connection of the two instances have the same key, so you have to copy the key created in local machine to the public virtual machine, and then connect to the private virtual machine
 
