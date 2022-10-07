@@ -1,9 +1,13 @@
-#Getting vpc
- data "aws_vpc" "joseph_rojas_vpc" { 
-    tags = {
-    Name = "joseph_rojas_vpc_lab"
-   }
+#Create VPC, user this if is necesary to create a new VPC
+resource "aws_vpc" "main_vpc" {                # Creating VPC here
+   cidr_block       = var.main_vpc_cidr     
  }
+#Getting vpc use this if VPC already exists
+# data "aws_vpc" "main_vpc" { 
+#    tags = {
+#    Name = "name_vpc"
+#   }
+# }
 
 #allocate public IP and creat NAT
 resource "aws_eip" "ipNTG" {
@@ -17,70 +21,85 @@ resource "aws_eip" "ipNTG" {
 
  #Creation of public and private subnets for EC2
  resource "aws_subnet" "publicsubnets" {    
-   vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
-   cidr_block = "10.1.13.0/24"   
+   vpc_id =  aws_vpc.main_vpc.id
+   cidr_block =  cidrsubnet(aws_vpc.main_vpc.cidr_block,8,var.publicSubnetEC2)
    tags = {
-    Name = "joseph_rojas_psn_ec2"
+    Name = "name_public_subntet_ec2"
    }      
  }
  
  resource "aws_subnet" "privatesubnets" {
-   vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
-   cidr_block = "10.1.20.0/24"  
+   vpc_id =  aws_vpc.main_vpc.id
+   cidr_block = cidrsubnet(aws_vpc.main_vpc.cidr_block,8,var.privateSubnetEC2)
    tags = {
-    Name = "joseph_rojas_private_ec2"
+    Name = "name_private_subnet_ec2"
    }       
  }
 
 data "aws_availability_zones" "available"{
 
 }
+
 #Creation of private subnets for BD
  resource "aws_subnet" "privatesubnet_db_1" {    
-   vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+   vpc_id =  aws_vpc.main_vpc.id
    availability_zone = data.aws_availability_zones.available.names[1]
-   cidr_block = "10.1.6.0/24"   
+   cidr_block = cidrsubnet(aws_vpc.main_vpc.cidr_block,8,3)
    tags = {
     Name = "joseph_rojas_rds_psn_1"
    }      
  }
 
  resource "aws_subnet" "privatesubnet_db_2" {    
-   vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+   vpc_id =  aws_vpc.main_vpc.id
    availability_zone = data.aws_availability_zones.available.names[2]
-   cidr_block = "10.1.7.0/24"   
+   cidr_block = cidrsubnet(aws_vpc.main_vpc.cidr_block,8,4)
    tags = {
     Name = "joseph_rojas_rds_psn_2"
    }      
  }
 
-#Getting IGW
- data "aws_internet_gateway" "IGW" {    
-    tags = {
-        Name = "joseph_rojas_IGW"
-    }            
- }
+ 
+
+#Getting IGW, use this in case of existing IGW
+# data "aws_internet_gateway" "IGW" {    
+#    tags = {
+#        Name = "name_IGW"
+#    }            
+# }
+resource "aws_internet_gateway" "IGW" {
+  vpc_id = aws_vpc.main_vpc.id
+  tags = {
+    Name = "name_IGW"
+  }
+}
 
 #Creation of route tables
  resource "aws_route_table" "PublicRT" {    
-    vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+    vpc_id =  aws_vpc.main_vpc.id
     route {
         cidr_block = "0.0.0.0/0"               
-        gateway_id = data.aws_internet_gateway.IGW.id
+        gateway_id = aws_internet_gateway.IGW.id
     }
+    depends_on = [
+      aws_internet_gateway.IGW
+    ]
     tags = {
-    Name = "joseph_rojas_route_table"
+    Name = "name_public_route_table"
    }
  }
 
  resource "aws_route_table" "PrivateRT" {    
-    vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+    vpc_id =  aws_vpc.main_vpc.id
     route {
         cidr_block = "0.0.0.0/0"               
         nat_gateway_id  = aws_nat_gateway.NATgw.id
     }
+    depends_on = [
+      aws_nat_gateway.NATgw
+    ]
     tags = {
-    Name = "joseph_rojas_private_route_table"
+    Name = "name_private_route_table"
    }
  }
 
@@ -96,10 +115,10 @@ data "aws_availability_zones" "available"{
  }
  
  #Creation of subnet groups
- resource "aws_db_subnet_group" "subnet_group_joseph" {
-   name = "test-rds"
+resource "aws_db_subnet_group" "subnet_group_joseph" {
+   name = "rds-group"
    subnet_ids = [ aws_subnet.privatesubnet_db_1.id, aws_subnet.privatesubnet_db_2.id ]
    tags = {
-     Name = "test-rds"
+     Name = "rds-group"
    }
  }

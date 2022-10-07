@@ -1,6 +1,6 @@
 #Creation of security groups
 resource "aws_security_group" "joseph_rojas_public_security_group" {
-  vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+  vpc_id =  aws_vpc.main_vpc.id
   name = "sg_group_public_ec2"
 
   ingress =  [{
@@ -43,7 +43,7 @@ resource "aws_security_group" "joseph_rojas_public_security_group" {
 }
 
 resource "aws_security_group" "joseph_rojas_private_security_group" {
-  vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+  vpc_id =  aws_vpc.main_vpc.id
   name = "sg_group_private_ec2"
 
   ingress =  [
@@ -76,7 +76,7 @@ resource "aws_security_group" "joseph_rojas_private_security_group" {
 }
 
 resource "aws_security_group" "joseph_rojas_rds_security_group" {
-  vpc_id =  data.aws_vpc.joseph_rojas_vpc.id
+  vpc_id =  aws_vpc.main_vpc.id
   name = "sg_group_access_rds"
 
   ingress =  [
@@ -128,11 +128,11 @@ resource "local_file" "myKey" {
 }
 
 #Creation of secret 
-resource "aws_secretsmanager_secret" "secret_master_bd" {
-  name = "master_access"
+resource "aws_secretsmanager_secret" "secret_master_bd_final" {
+  name = "master_access_key"
 }
 resource "aws_secretsmanager_secret_version" "access" {
-  secret_id = aws_secretsmanager_secret.secret_master_bd.id
+  secret_id = aws_secretsmanager_secret.secret_master_bd_final.id
   secret_string = jsonencode(var.credentials)
 }
 

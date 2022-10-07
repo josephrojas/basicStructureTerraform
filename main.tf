@@ -3,7 +3,7 @@
  }
 
 # Select the type of instance for usability 
-# deploy httpd
+
 # Creation of instances
  resource "aws_instance" "public_instance"{
     ami = "ami-0568773882d492fc8"
@@ -15,12 +15,15 @@
     tags = {
         Name = "public_instance"
     }
+    user_data = "${file("httpd.sh")}"
  }
 
  resource "aws_instance" "private_instance" {
     ami = "ami-0568773882d492fc8"
     instance_type = "t2.micro"
-    
+    depends_on = [
+      aws_db_instance.rds_joseph
+    ]
     subnet_id = aws_subnet.privatesubnets.id
     key_name = aws_key_pair.workshop_key_pair.key_name
     vpc_security_group_ids = [ aws_security_group.joseph_rojas_private_security_group.id ]
@@ -28,6 +31,7 @@
     tags = {
         Name = "private_instance"
     }
+    user_data = "${file("httpd.sh")}"
  }
 
 
