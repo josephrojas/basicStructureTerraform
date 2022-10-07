@@ -1,5 +1,5 @@
 # Basic structure 
-This project replicates a basic structure use in most projects of IaC, this repository pretend to be a help to have a basic structure or template to start in any project which involves creating things such as: 
+This project replicates a basic structure use in most projects of IaC, this repository pretend to be a help and to have a basic structure or template to start in any project which involves creating things such as: 
 - VPC
 - subnets
 - KMS
