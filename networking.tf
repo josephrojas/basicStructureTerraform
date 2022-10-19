@@ -11,7 +11,7 @@ resource "aws_vpc" "main_vpc" {                # Creating VPC here
 
 #allocate public IP and creat NAT
 resource "aws_eip" "ipNTG" {
-    vpc = true
+    vpc = true #Optional
     
  }
  resource "aws_nat_gateway"  "NATgw"{
