@@ -4,3 +4,10 @@ variable "lamp_vpc_CIDR" {
   
 }
 
+variable "credentials" {
+  type = object({
+    username = string
+    password = string
+  })
+}
+
