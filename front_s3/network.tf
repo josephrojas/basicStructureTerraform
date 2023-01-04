@@ -16,6 +16,12 @@ resource "aws_cloudfront_distribution" "s3_test_distribution" {
   enabled = true
   default_root_object = "index.html"
 
+  custom_error_response {
+    error_code = 403
+    response_code = 200
+    response_page_path  = "/error.html"    
+  }
+
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"
     compress = false
@@ -33,7 +39,8 @@ resource "aws_cloudfront_distribution" "s3_test_distribution" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      restriction_type = "blacklist"
+      locations = ["US","SE"]
     }
   }
 

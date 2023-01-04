@@ -14,6 +14,12 @@ variable "content_type" {
     "index.html" = "text/html"
     "app.js" = "application/javascript"
     "style.css" = "text/css"
+    "error.html" = "text/html"
+    "appError.js" = "application/javascript"
    }
 }
 
+variable "acl_name" {
+  type = string
+  default = "web_acl_s3"
+}
