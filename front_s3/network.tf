@@ -48,6 +48,8 @@ resource "aws_cloudfront_distribution" "s3_test_distribution" {
     cloudfront_default_certificate = true
   }
 
+  web_acl_id = aws_wafv2_web_acl.acl_front.arn
+
   tags_all = {
     "Name" = "cloudfront-s3"
   }

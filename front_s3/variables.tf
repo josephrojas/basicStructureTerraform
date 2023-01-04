@@ -15,7 +15,6 @@ variable "content_type" {
     "app.js" = "application/javascript"
     "style.css" = "text/css"
     "error.html" = "text/html"
-    "appError.js" = "application/javascript"
    }
 }
 

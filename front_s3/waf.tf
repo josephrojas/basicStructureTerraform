@@ -1,3 +1,5 @@
+
+
 resource "aws_wafv2_web_acl" "acl_front" {
   provider    = aws.provider_waf
   name        = var.acl_name
@@ -116,9 +118,6 @@ resource "aws_wafv2_web_acl" "acl_front" {
     }
   }
 
-  depends_on = [
-    aws_cloudfront_distribution.s3_test_distribution
-  ]
   tags_all = {
     Name  = "WebACLfront"
     Owner = "Joseph.rojas"
