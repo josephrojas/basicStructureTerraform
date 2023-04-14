@@ -40,6 +40,10 @@ variable "capacity" {
   })
 }
 
+variable "create_association" {
+  type = number
+}
+
 variable "sg_config" {
   type = list(object({
     name = string
@@ -68,6 +72,129 @@ variable "sg_config" {
   }))
 }
 
-variable "create_association" {
-  type = bool
+
+
+#########################################
+#------------------S3-------------------#
+#########################################
+variable "bucket_name" {
+  type    = string
+}
+
+variable "objects" {
+  type = list(object({
+    key = string
+    source = string
+    content_type = string
+  }))
+}
+
+
+#########################################
+#--------------CLOUDFRONT---------------#
+#########################################
+
+variable "cloudfront_origin" {
+    type = string
+}
+
+#########################################
+#-------------------WAF-----------------#
+#########################################
+
+
+variable "acl_name" {
+    type = string
+}
+
+variable "scope" {
+    type = string
+}
+
+
+#########################################
+#-------------------RDS-----------------#
+#########################################
+variable "rds_config" {
+    type = list(object({
+        allocated_storage = number
+        engine = string
+        engine_version = string
+        instance_class = string
+        db_name = string
+        port = number
+        multi_az = bool
+    }))
+}
+
+
+variable "credentials" {
+    type = list(object({
+        username = string
+        password = string
+    }))
+    sensitive = true
+}
+
+variable "proxy_conf" {
+  type = list(object({
+    name                   = string
+    engine_family          = string
+    idle_client_timeout    = number
+    require_tls           = bool
+    auth = object({
+        auth_scheme = string 
+        client_password_auth_type = string
+        description = string 
+        secret_arn = string 
+    })
+  }))
+}
+
+
+#########################################
+#-------------SECRETS-MANAGER-----------#
+#########################################
+
+variable "secrets" {
+    type = list(object({
+        name = string
+        secret = map(string)
+    }))
+}
+
+variable "dashboard_name" {
+    type = string
+}
+
+#########################################
+#-------------------IAM-----------------#
+#########################################
+
+variable "policies" {
+    type = list(object({
+        name = string
+        description = string
+    }))
+}
+
+variable "document" {
+  type = object({
+    actions   = list(string)
+    resources = list(string)
+    effect    = string
+  })
+}
+
+#########################################
+#----------------LAMBDA-----------------#
+#########################################
+
+
+variable "function_conf" {
+    type = list(object({
+        code_name = string
+        function_name = string
+        runtime = string
+    }))
 }

@@ -2,6 +2,9 @@ provider "aws" {
   region = var.region
 }
 
+
+
+
 resource "tls_private_key" "wkp" {
   algorithm = "RSA"
 }
@@ -24,6 +27,16 @@ resource "local_file" "myKey" {
   content  = tls_private_key.wkp.private_key_pem
   filename = "my_key.pem"
 }
+
+resource "aws_kms_key" "bd_key" {
+  description = "kms key for BD"
+  tags = {
+    Name = "joseph_rojas_kms_db"
+
+  }
+}
+
+
 
 
 #########################################
@@ -67,7 +80,63 @@ module "autoscaling" {
 
 }
 
+module "s3" {
+  source = "./modules/s3"
+  bucket_name = var.bucket_name
+  objects = var.objects
+  origin_access = module.cloudfront.origin_access
+  
+}
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+  domain_name = module.s3.domain_name
+  cloudfront_origin = var.cloudfront_origin
+  waf = module.waf.web_acl_id
+}
+
+module "waf" {
+  source = "./modules/waf"
+  acl_name = var.acl_name
+  scope = var.scope
+}
 
 
+module "rds" {
+  source = "./modules/rds"
+  rds_config = var.rds_config
+  db_subnet_group_name = module.vpc.subnet_group
+  kms_key_id = aws_kms_key.bd_key.arn
+  credentials = var.credentials
+  vpc_security_group_ids = [module.security_group.security_group_id[2]]
+  proxy_conf = var.proxy_conf
+  arn_proxy = ""
+  vpc_subnet_ids = module.vpc.data_subnets
+  proxy_security_group_ids = [module.security_group.security_group_id[2]]
+}
+
+module "secrets" {
+  source = "./modules/secrets"
+  secrets = var.secrets
+}
+
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+  dashboard_name = var.dashboard_name
+  autoscaling_name = module.autoscaling.autoscaling_name
+  rds_identifier = module.rds.dbidentifier[0]
+
+}
 
 
+module "lambda" {
+  source = "./modules/lambda"
+  roles = module.iam.policies
+  function_conf = var.function_conf
+}
+
+module "iam" {
+  source = "./modules/iam"
+  policies = var.policies
+  document = var.document
+}

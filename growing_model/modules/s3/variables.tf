@@ -3,22 +3,14 @@ variable "bucket_name" {
   default = "s3-public-website-terraform"
 }
 
-variable "cloudfront_origin" {
-  type = string
-  default = "website-test"
+variable "objects" {
+  type = list(object({
+    key = string
+    source = string
+    content_type = string
+  }))
 }
 
-variable "content_type" {
-  type = map(string)
-  default = {
-    "index.html" = "text/html"
-    "app.js" = "application/javascript"
-    "style.css" = "text/css"
-    "error.html" = "text/html"
-   }
-}
-
-variable "acl_name" {
+variable "origin_access" {
   type = string
-  default = "web_acl_s3"
 }

@@ -34,5 +34,5 @@ variable "target_group" {
 }
 
 variable "create_association" {
-  type = bool
+  type = number
 }

@@ -23,7 +23,7 @@ resource "aws_launch_template" "launch_template" {
 
   vpc_security_group_ids = var.security_groups
   key_name = var.key_name
-  user_data = filebase64("user_data.sh")
+  user_data = filebase64("./modules/auto-scaling/user_data.sh")
   update_default_version = true
   instance_initiated_shutdown_behavior = "terminate"
 
@@ -78,7 +78,7 @@ resource "aws_autoscaling_group" "autoscaling_workshop" {
 
 
 resource "aws_autoscaling_attachment" "asg_attachment_workshop" {
-  count = var.create_association ? 1 : 0
+  count = var.create_association > 0 ? 1 : 0
   autoscaling_group_name = aws_autoscaling_group.autoscaling_workshop.id
   lb_target_group_arn = var.target_group
 }
