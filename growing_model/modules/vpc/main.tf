@@ -106,7 +106,7 @@ resource "aws_subnet" "private_subnets" {
 resource "aws_subnet" "data_subnets" {    
    vpc_id =  aws_vpc.vpc_services.id
    count = var.data_subnets
-   cidr_block =  cidrsubnet(aws_vpc.vpc_services.cidr_block,4,count.index + var.data_subnets + 2)
+   cidr_block =  cidrsubnet(aws_vpc.vpc_services.cidr_block,4,count.index + var.data_subnets + 3)
    availability_zone = data.aws_availability_zones.available.names[count.index]
    tags = {
      "Name" = "pragma-modelo-crecimiento-pdn-data-subnet-${count.index + 1}",

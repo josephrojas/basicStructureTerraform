@@ -133,10 +133,18 @@ module "lambda" {
   source = "./modules/lambda"
   roles = module.iam.policies
   function_conf = var.function_conf
+  source_arn = module.api_gw.source_arn
 }
 
 module "iam" {
   source = "./modules/iam"
   policies = var.policies
   document = var.document
+}
+
+module "api_gw" {
+  source = "./modules/api_gateway"
+  api_name = var.api_name
+  resource = var.resource
+  uri = module.lambda.invoke_arn
 }

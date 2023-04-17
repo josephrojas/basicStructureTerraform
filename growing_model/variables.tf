@@ -198,3 +198,15 @@ variable "function_conf" {
         runtime = string
     }))
 }
+
+
+variable "api_name" {
+    type = string
+}
+
+variable "resource" {
+    type = list(object({
+        path_part = string
+        http_method = string
+    }))
+}

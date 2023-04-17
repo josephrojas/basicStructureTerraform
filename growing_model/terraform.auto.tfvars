@@ -22,15 +22,15 @@ capacity = {
 
 sg_config = [{
   ingress = [{
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port        = 80
+    protocol         = "tcp"
     description      = "TCP rule"
-    from_port        = 22
+    cidr_blocks      = []
+    to_port          = 80
     ipv6_cidr_blocks = []
     prefix_list_ids  = []
-    protocol         = "tcp"
     security_groups  = []
     self             = false
-    to_port          = 22
   }]
   egress = [{
     description      = "Outbound rule"
@@ -151,7 +151,7 @@ proxy_conf = []
 #########################################
 
 secrets = [{
-  name = "rds-credential1"
+  name = "rds-credential2"
   secret = {
     password = "lab-rds-master"
     username = "master"
@@ -170,7 +170,7 @@ policies = [{
 }]
 
 document = {
-  actions = ["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"]
+  actions   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
   effect    = "Allow"
   resources = ["arn:aws:logs:*:*:*"]
 }
@@ -183,4 +183,12 @@ function_conf = [{
   code_name     = "hello_world"
   function_name = "lambda_auth"
   runtime       = "python3.8"
+}]
+
+
+api_name = "api-workshop"
+
+resource = [{
+  http_method = "ANY"
+  path_part   = "auth"
 }]

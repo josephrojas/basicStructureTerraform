@@ -9,3 +9,7 @@ variable "function_conf" {
         runtime = string
     }))
 }
+
+variable "source_arn" {
+    type = string
+}

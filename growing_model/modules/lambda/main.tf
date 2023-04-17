@@ -1,6 +1,6 @@
 resource "aws_iam_role" "lambda_role" {
 
-  name = "Spacelift_Test_Lambda_Function_Role"
+  name = "ambda_Function_Role"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -16,6 +16,15 @@ resource "aws_iam_role" "lambda_role" {
       ]
     }
   )
+}
+
+resource "aws_lambda_permission" "permission_api" {
+  count         = length(var.function_conf)
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = var.function_conf[count.index].function_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${var.source_arn}/*/*"
 }
 
 
